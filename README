@@ -7,6 +7,9 @@ The API can be run with npm start and runs at port 8888.
 The Web can be run with npm start and runs at port 8889.
 
 
+*please provide urls with "https://".
+
+
 API Documntation: 
 
 
@@ -43,7 +46,7 @@ header:
 }
 body:
 {
-	"url": "https://gist.github.com/dominicumbeer/8f1601365eab242a66e386d724cdaa66"
+	"url": "https://github.com/PandasProperty/ShortenerURL"
 }
 response:
 {

@@ -138,7 +138,7 @@ class AppComponent extends React.Component {
   }
 
   validUrl() {
-    if (pattern.test(this.state.url)) {
+    if (pattern.test(this.state.origin)) {
       return true;
     }
     this.setState({

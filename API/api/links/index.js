@@ -78,7 +78,7 @@ var updateLink = function (req, res) {
         });
     }
     var url = req.body.url;
-    LinkModel.update({'shortenUrl': shortenUrl}, {origin: url}, function (error, obj) {
+    LinkModel.update({'shortenUrl': shortenUrl}, {origin: url}, function (error) {
         if (error) {
             return res.status(500).json({
                 error: 'Could not update the original url.'
