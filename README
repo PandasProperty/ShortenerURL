@@ -1,0 +1,103 @@
+The challenge is to develop an application similar to bit.ly - the link shortener.
+
+The backend (API) is implemented in nodeJS using Express and MongoDB, and the frontend (Web) in React + Redux.
+
+The API can be run with npm start and runs at port 8888.
+
+The Web can be run with npm start and runs at port 8889.
+
+
+API Documntation: 
+
+
+POST : /v1/links
+body:
+{
+	"url": "https://gist.github.com/dominicumbeer/8f1601365eab242a66e386d724cdaa66"
+}
+response:
+{
+  "hash": "WRn8nC52iw+IiQzA"
+}
+
+
+GET: /v1/{hash}
+response: redirects to the target url
+
+
+POST: v1/auth
+body: 
+{
+	"username": "user",
+	"password": "panda"
+}
+response: {
+  "token":""
+}
+
+
+POST : /v1/links	- the method works both for a authenticated user or a non one. (It stores the link per user or not)
+header:
+{
+	Authorization: Bearer {token}
+}
+body:
+{
+	"url": "https://gist.github.com/dominicumbeer/8f1601365eab242a66e386d724cdaa66"
+}
+response:
+{
+  "hash": "WRn8nC52iw+IiQzA"
+}
+
+
+GET: /v1/links		- returns the links of an user
+header:
+{
+	Authorization: Bearer {token}
+}
+
+
+PUT /v1/links/{hash} 	- updates the target url (only the user that created this hash can update it)
+header:
+{
+	Authorization: Bearer {token}
+}
+body:
+{
+	"url": ""
+}
+response:
+{
+  "error": 0
+}
+
+
+DELETE /v1/links/{hash}		- deletes the mapped url (only the user that created this hash can delete it)
+header:
+{
+	Authorization: Bearer {token}
+}
+
+
+
+The front-end:
+
+On the main dashboard you can see a header with NEW URL and LOGIN.
+Click on new url and it will display the form for creating a new url hash.
+Login using the following credentials:
+{
+	"username": "user",
+	"password": "panda"
+}
+and the header will update with a new tab: HISTORY.
+Create some new urls and see them in history tab where you have options to edit or delete them.
+
+To store the user's token I used Redux store. 
+
+Thanks,
+Anda
+
+
+
+
