@@ -8,6 +8,7 @@ import FormGroup from 'react-bootstrap/lib/FormGroup';
 import FormControl from 'react-bootstrap/lib/FormControl';
 import ControlLabel from 'react-bootstrap/lib/ControlLabel';
 import {Link} from 'react-router';
+import {onShowModal} from './../actions';
 
 import request from 'browser-request';
 import config from 'config';
@@ -17,7 +18,6 @@ require('./../styles/Login.scss');
 import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import {onLogin} from './../actions';
 
 class AppComponent extends Component {
 
@@ -62,6 +62,7 @@ class AppComponent extends Component {
       json: true
     }, function (error, response, body) {
       if (error) {
+        this.props.on
         return this.props.onLogin('Internal server error.');
       }
       if (response.status != 200) {

@@ -3,21 +3,21 @@
  */
 
 import React from 'react';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
 import request from 'browser-request';
 import config from 'config';
 import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
+import Button from 'react-bootstrap/lib/Button';
+import Modal from 'react-bootstrap/lib/Modal';
 import Url from './Url';
+import {bindActionCreators} from 'redux';
+import {connect} from 'react-redux';
+import {getUrls, onHideModal} from './../actions';
 
 class AppComponent extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      urls: [ ]
-    };
     this.reload = this.reload.bind(this);
   }
 
@@ -27,9 +27,24 @@ class AppComponent extends React.Component {
         margin: 'auto', paddingTop: '100px'
       }}>
 
+        <Modal bsSize='small' show={this.props.modal.show}>
+          <Modal.Header closeButton>
+            <Modal.Title>{this.props.modal.title}</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {this.props.modal.content}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={function () {
+              this.props.onHideModal();
+              this.reload();
+            }.bind(this)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+
         <Col xs={12} sm={12} md={12} lg={12} style={{paddingBottom: '10px'}}>
           {
-            this.state.urls.length == 0 ? (
+            !this.props.urls || this.props.urls.length == 0 ? (
               <div>No links found for this user</div>
             ) : (
               <Row>
@@ -43,8 +58,8 @@ class AppComponent extends React.Component {
           }
         </Col>
         {
-          this.state.urls.map(function (url, index) {
-            return (<Url url={url} key={index} reload={this.reload}/>);
+          this.props.urls && this.props.urls.map(function (url, index) {
+            return (<Url url={url} key={index}/>);
           }.bind(this))
         }
 
@@ -69,38 +84,23 @@ class AppComponent extends React.Component {
       },
       withCredentials: true,
       json: true
-    }, function (error, response, body) {
-      if (error) {
-        return this.setState({
-          response: {
-            error: 'Internal server error.',
-            url: null
-          }
-        });
-      }
-      if (response.status != 200) {
-        return this.setState({
-          response: {
-            error: body.error,
-            url: null
-          }
-        });
-      }
-      this.setState({
-        urls: body.links
-      });
-    }.bind(this));
+    }, this.props.getUrls);
   }
 }
 
 function mapStateToProps(state) {
   return {
-    user: state.user
+    user: state.user,
+    urls: state.urls,
+    modal: state.modal
   };
 }
 
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({
+    getUrls: getUrls,
+    onHideModal: onHideModal
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(AppComponent);

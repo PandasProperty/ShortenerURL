@@ -6,12 +6,11 @@ import React from 'react';
 import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 import FormControl from 'react-bootstrap/lib/FormControl';
-import Button from 'react-bootstrap/lib/Button';
-import Modal from 'react-bootstrap/lib/Modal';
-import {bindActionCreators} from 'redux';
-import {connect} from 'react-redux';
 import request from 'browser-request';
 import config from 'config';
+import {bindActionCreators} from 'redux';
+import {onShowModal} from './../actions';
+import {connect} from 'react-redux';
 
 require('./../styles/Url.scss');
 
@@ -44,33 +43,13 @@ class AppComponent extends React.Component {
   componentWillReceiveProps(newProps) {
     this.setState({
       url: newProps.url,
-      origin: newProps.url && newProps.origin
+      origin: newProps.url && newProps.url.origin
     });
   }
 
   render() {
     return (
       <Col xs={12} sm={12} md={12} lg={12} style={{paddingBottom: '5px'}}>
-
-        <Modal bsSize='small' show={this.state.modal.show}>
-          <Modal.Header closeButton>
-            <Modal.Title>{this.state.modal.title}</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            {this.state.modal.content}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={function () {
-              this.setState({
-                modal: {
-                  title: '',
-                  content: '',
-                  show: false
-                }
-              });
-            }.bind(this)}>Close</Button>
-          </Modal.Footer>
-        </Modal>
 
         {
           this.state.url ? (
@@ -165,32 +144,7 @@ class AppComponent extends React.Component {
         },
         json: true
       }, function (error, response, body) {
-        if (error) {
-          return this.setState({
-            modal: {
-              show: true,
-              title: 'Update URL',
-              content: 'Internal server error.'
-            }
-          });
-        }
-        if (response.status != 200) {
-          return this.setState({
-            modal: {
-              show: true,
-              title: 'Update URL',
-              content: body.error
-            }
-          });
-        }
-        this.setState({
-          modal: {
-            show: true,
-            title: 'Update URL',
-            content: 'URL updated.'
-          }
-        });
-        this.props.reload();
+        this.props.onShowModal('Update URL', 'URL updated.', error, response, body);
       }.bind(this));
     }
   }
@@ -204,32 +158,7 @@ class AppComponent extends React.Component {
         'Accept': 'application/json'
       }
     }, function (error, response, body) {
-      if (error) {
-        return this.setState({
-          modal: {
-            show: true,
-            title: 'Delete URL',
-            content: 'Internal server error.'
-          }
-        });
-      }
-      if (response.status != 200) {
-        return this.setState({
-          modal: {
-            show: true,
-            title: 'Delete URL',
-            content: body.error
-          }
-        });
-      }
-      this.setState({
-        modal: {
-          show: true,
-          title: 'Delete URL',
-          content: 'URL deleted.'
-        }
-      });
-      this.props.reload();
+      this.props.onShowModal('Delete URL', 'URL deleted.', error, response, body);
     }.bind(this));
   }
 
@@ -242,7 +171,9 @@ function mapStateToProps(state) {
 }
 
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({
+    onShowModal: onShowModal
+  }, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(AppComponent);
